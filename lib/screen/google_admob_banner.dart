@@ -90,6 +90,10 @@ class _GoogleAdmobHomepageState extends State<GoogleAdmobHomepage> {
                           _showInterstitialAd(count);
                           print('count---> $count');
                         }
+
+                        if (count == 5) {
+                          count = 0;
+                        }
                       },
                     );
                   },
