@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_admob_flutter/screen/google_admob_banner.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() {
-  runApp() => const MyApps();
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
+  runApp(
+    const MyApps(),
+  );
 }
 
 class MyApps extends StatelessWidget {
