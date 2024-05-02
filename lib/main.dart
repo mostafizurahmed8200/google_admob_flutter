@@ -16,11 +16,13 @@ class MyApps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      themeMode: ThemeMode.dark,
       theme: ThemeData(
-        primaryColor: Colors.blue,
-        hintColor: Colors.green,
+        useMaterial3: false,
+        primaryColor: Colors.green,
+        appBarTheme: const AppBarTheme(color: Colors.green, centerTitle: true),
       ),
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       routes: {
         '/': (context) => const GoogleAdmobHomepage(),
       },

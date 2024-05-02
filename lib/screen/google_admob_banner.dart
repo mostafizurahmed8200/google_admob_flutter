@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_admob_flutter/constant/constant.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import 'google_admob_native.dart';
+
 class GoogleAdmobHomepage extends StatefulWidget {
   const GoogleAdmobHomepage({super.key});
 
@@ -11,6 +13,7 @@ class GoogleAdmobHomepage extends StatefulWidget {
 
 class _GoogleAdmobHomepageState extends State<GoogleAdmobHomepage> {
   late BannerAd _bannerAd;
+  late InterstitialAd _interstitialAd;
   String isShowBannerAds = "true";
   int count = 0;
 
@@ -18,24 +21,50 @@ class _GoogleAdmobHomepageState extends State<GoogleAdmobHomepage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _loadBannerAds();
+    _insAdsLoad();
+  }
+
+  Future<void> _loadBannerAds() async {
     _bannerAd = BannerAd(
-        size: AdSize.largeBanner,
-        adUnitId: AdsConstant.bannerAdsID,
-        listener: const BannerAdListener(),
-        request: const AdRequest())
-      ..load();
+      size: AdSize.largeBanner,
+      adUnitId: AdsConstant.bannerAdsID,
+      listener: const BannerAdListener(),
+      request: const AdRequest(),
+    )..load();
+  }
+
+  Future<void> _insAdsLoad() async {
+    InterstitialAd.load(
+      adUnitId: AdsConstant.interstitialAdsID,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          print('InterstitialAd failed to load: $error');
+        },
+      ),
+    );
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
+
     _bannerAd.dispose();
+    _interstitialAd.dispose();
+
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Google Admob '),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -52,13 +81,32 @@ class _GoogleAdmobHomepageState extends State<GoogleAdmobHomepage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    setState(() {
-                      count++;
-                    });
+                    setState(
+                      () {
+                        count++;
+                        if ((isShowBannerAds != 'true')) {
+                          _navigateToNextScreen();
+                        } else {
+                          _showInterstitialAd(count);
+                          print('count---> $count');
+                        }
+                      },
+                    );
                   },
+                  style: ElevatedButton.styleFrom(
+                    enableFeedback: true,
+                    shadowColor: Colors.lightGreenAccent,
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
                   child: const Text(
                     'Show Interstitial Ads',
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -66,7 +114,7 @@ class _GoogleAdmobHomepageState extends State<GoogleAdmobHomepage> {
                 ),
                 Text(
                   count.toString(),
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
               ],
             ),
@@ -80,6 +128,29 @@ class _GoogleAdmobHomepageState extends State<GoogleAdmobHomepage> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showInterstitialAd(int count) {
+    if (_interstitialAd.responseInfo != null && count % 5 == 0) {
+      _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (InterstitialAd ad) {
+          _navigateToNextScreen();
+        },
+      );
+      _interstitialAd.show();
+    } else {
+      // Navigate to the next screen directly if the count is not divisible by 5 or if the ad fails to load
+      _navigateToNextScreen();
+      print('Interstitial ad not ready yet.');
+    }
+  }
+
+  void _navigateToNextScreen() {
+    // Navigate to the next screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const GoogleAdmobNativeAds()),
     );
   }
 }
