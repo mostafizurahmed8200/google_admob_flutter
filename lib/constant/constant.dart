@@ -6,6 +6,12 @@ class AdsConstant {
   static const rewardedAdsID = 'ca-app-pub-3940256099942544/5224354917';
 }
 
-class StringConstant {}
+class StringConstant {
+  static const googleAdmob = 'Google Admob';
+  static const nativeAdmob = 'Google Native Admob';
+}
 
-class ImageConstant {}
+class ImageConstant {
+  static const root_image = 'image/';
+  static const ic_demo = '${root_image}images.png';
+}

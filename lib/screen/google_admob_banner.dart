@@ -63,7 +63,7 @@ class _GoogleAdmobHomepageState extends State<GoogleAdmobHomepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Google Admob '),
+        title: const Text(StringConstant.googleAdmob),
       ),
       body: Column(
         children: [
@@ -81,6 +81,7 @@ class _GoogleAdmobHomepageState extends State<GoogleAdmobHomepage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    // _showDisablePrivateDnsDialog(context);
                     setState(
                       () {
                         count++;
@@ -144,9 +145,7 @@ class _GoogleAdmobHomepageState extends State<GoogleAdmobHomepage> {
       );
       _interstitialAd.show();
     } else {
-      // Navigate to the next screen directly if the count is not divisible by 5 or if the ad fails to load
       _navigateToNextScreen();
-      print('Interstitial ad not ready yet.');
     }
   }
 
@@ -157,4 +156,24 @@ class _GoogleAdmobHomepageState extends State<GoogleAdmobHomepage> {
       MaterialPageRoute(builder: (context) => const GoogleAdmobNativeAds()),
     );
   }
+}
+
+void _showDisablePrivateDnsDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Disable Private DNS'),
+        content: const Text('Please disable Private DNS to continue'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
 }
